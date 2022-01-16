@@ -1,5 +1,6 @@
 package top.kaluna.wiki;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 
 
-//@MapperScan("com.kaluna.wiki.mapper")
+@MapperScan("top.kaluna.wiki.mapper")
 @EnableScheduling
 @EnableAsync
 @SpringBootApplication
