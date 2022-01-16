@@ -32,5 +32,5 @@ create table `ebook` (
     primary key (`id`)
 )engine = innodb default charset = utf8mb4 comment = '电子书';
 insert into `ebook` (id, name, description) values (1,'spring boot', '啦啦啦啦');
-insert into `ebook` (id, name, description) values (2, 'spring cloud' '哈哈哈');
+insert into `ebook` (id, name, description) values (2, 'spring cloud','哈哈哈');
 insert into `ebook` (id, name, description) values (3, 'java', '呵呵呵');
