@@ -3,8 +3,9 @@ package top.kaluna.wiki.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.kaluna.wiki.domain.Ebook;
+import top.kaluna.wiki.req.EbookReq;
 import top.kaluna.wiki.resp.CommonResp;
+import top.kaluna.wiki.resp.EbookResp;
 import top.kaluna.wiki.service.EbookService;
 
 import javax.annotation.Resource;
@@ -22,9 +23,9 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/list")
-    public CommonResp<List<Ebook>> list(){
-        CommonResp<List<Ebook>> resp = new CommonResp<>();
-        List<Ebook> list = ebookService.list();
+    public CommonResp<List<EbookResp>> list(EbookReq ebookReq){
+        CommonResp<List<EbookResp>> resp = new CommonResp<>();
+        List<EbookResp> list = ebookService.list(ebookReq);
         resp.setContent(list);
         return resp;
     }
