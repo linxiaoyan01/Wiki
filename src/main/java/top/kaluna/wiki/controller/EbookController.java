@@ -24,6 +24,7 @@ public class EbookController {
 
     @GetMapping("/list")
     public CommonResp<List<EbookResp>> list(EbookReq ebookReq){
+        System.out.println(ebookReq);
         CommonResp<List<EbookResp>> resp = new CommonResp<>();
         List<EbookResp> list = ebookService.list(ebookReq);
         resp.setContent(list);

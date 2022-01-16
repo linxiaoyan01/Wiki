@@ -34,3 +34,5 @@ create table `ebook` (
 insert into `ebook` (id, name, description) values (1,'spring boot', '啦啦啦啦');
 insert into `ebook` (id, name, description) values (2, 'spring cloud','哈哈哈');
 insert into `ebook` (id, name, description) values (3, 'java', '呵呵呵');
+insert into `ebook` (id, name, description) values (4, 'java', '嘻嘻嘻');
+insert into `ebook` (id, name, description) values (5, 'java', '叽叽叽');
