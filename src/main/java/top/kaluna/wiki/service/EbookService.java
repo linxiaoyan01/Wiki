@@ -1,6 +1,7 @@
 package top.kaluna.wiki.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import top.kaluna.wiki.domain.Ebook;
 import top.kaluna.wiki.domain.EbookExample;
 import top.kaluna.wiki.mapper.EbookMapper;
@@ -23,7 +24,9 @@ public class EbookService {
     public List<EbookResp> list(EbookReq ebookReq){
         EbookExample ebookExample = new EbookExample();
         final EbookExample.Criteria criteria = ebookExample.createCriteria();
-        criteria.andNameLike("%"+ebookReq.getName()+"%");
+        if(!ObjectUtils.isEmpty(ebookReq.getName())){
+            criteria.andNameLike("%"+ebookReq.getName()+"%");
+        }
         final List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
 
         final List<EbookResp> respsList = CopyUtil.copyList(ebooks, EbookResp.class);
