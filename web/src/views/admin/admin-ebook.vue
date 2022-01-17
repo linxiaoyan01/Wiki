@@ -77,7 +77,7 @@
      const ebooks = ref();
      const pagination = ref({
        current: 1,
-       pageSize: 1001,
+       pageSize: 4,
        total: 0
      });
      const loading = ref(false);
@@ -129,7 +129,7 @@
          params:{
            page: params.page,
            size: params.size
-
+         }
        }).then((response)=>{
          loading.value = false;
          const data = response.data;
@@ -161,6 +161,7 @@
      const handleModalOk = () =>{
        modalLoading.value = true;
        axios.post("/ebook/save", ebook.value).then((response)=>{
+         modalLoading.value = false;
          const data = response.data; //data = commonResp
          if(data.success){
            //重新加载列表
@@ -168,6 +169,8 @@
              page: pagination.value.current,
              size: pagination.value.pageSize
            })
+         }else{
+           message.error(data.message);
          }
        });
      };
