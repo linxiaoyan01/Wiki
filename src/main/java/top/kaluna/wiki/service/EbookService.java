@@ -9,8 +9,9 @@ import org.springframework.util.ObjectUtils;
 import top.kaluna.wiki.domain.Ebook;
 import top.kaluna.wiki.domain.EbookExample;
 import top.kaluna.wiki.mapper.EbookMapper;
-import top.kaluna.wiki.req.EbookReq;
-import top.kaluna.wiki.resp.EbookResp;
+import top.kaluna.wiki.req.EbookQueryReq;
+import top.kaluna.wiki.req.EbookSaveReq;
+import top.kaluna.wiki.resp.EbookQueryResp;
 import top.kaluna.wiki.resp.PageResp;
 import top.kaluna.wiki.util.CopyUtil;
 
@@ -28,26 +29,36 @@ public class EbookService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
 
-    public PageResp<EbookResp> list(EbookReq ebookReq){
+    public PageResp<EbookQueryResp> list(EbookQueryReq ebookQueryReq){
 
         EbookExample ebookExample = new EbookExample();
         final EbookExample.Criteria criteria = ebookExample.createCriteria();
-        if(!ObjectUtils.isEmpty(ebookReq.getName())){
-            criteria.andNameLike("%"+ebookReq.getName()+"%");
+        if(!ObjectUtils.isEmpty(ebookQueryReq.getName())){
+            criteria.andNameLike("%"+ ebookQueryReq.getName()+"%");
         }
         //两个请求参数
-        PageHelper.startPage(ebookReq.getPage(), ebookReq.getSize());
+        PageHelper.startPage(ebookQueryReq.getPage(), ebookQueryReq.getSize());
         final List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebooks);
         LOG.info("总行数：{}", pageInfo.getTotal());
         LOG.info("总页数：{}",pageInfo.getPages());
 
-        final List<EbookResp> respsList = CopyUtil.copyList(ebooks, EbookResp.class);
+        final List<EbookQueryResp> respsList = CopyUtil.copyList(ebooks, EbookQueryResp.class);
 
-        PageResp<EbookResp> pageResp = new PageResp<>();
+        PageResp<EbookQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(respsList);
         return pageResp;
+    }
+
+    public void save(EbookSaveReq ebookQueryReq) {
+        Ebook ebook = CopyUtil.copy(ebookQueryReq, Ebook.class);
+        if(ObjectUtils.isEmpty(ebook)){
+            //新增
+            ebookMapper.insert(ebook);
+        }else {
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }

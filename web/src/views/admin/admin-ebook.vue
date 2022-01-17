@@ -63,11 +63,10 @@
      const ebooks = ref();
      const pagination = ref({
        current: 1,
-       pageSize: 5,
+       pageSize: 3,
        total: 0
      });
      const loading = ref(false);
-
      const columns = [
        {
          title: '封面',
@@ -110,9 +109,7 @@
       * 数据查询
       * @param params
       */
-     const handleQuery = (params:any)=>{
-
-       loading.value = true;
+     const handleQuery = (params:any)=>{       loading.value = true;
        axios.get("/ebook/list", {
          params:{
            page: params.page,
@@ -144,10 +141,18 @@
      const modalLoading = ref(false);
      const handleModalOk = () =>{
        modalLoading.value = true;
-       setTimeout(()=>{
-         modalLoading.value = false;
-         modalVisible.value = false;
-       },2000);
+       axios.post("/ebook/save", ebook.value).then((response)=>{
+         const data = response.data; //data = commonResp
+         if(data.success){
+           modalLoading.value = false;
+           modalVisible.value = false;
+         }
+         //重新加载列表
+         handleQuery({
+           page: pagination.value.current,
+           size: pagination.value.pageSize
+         })
+       });
      };
      const edit = (record: any)=>{
        modalVisible.value = true;
