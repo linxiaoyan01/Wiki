@@ -11,6 +11,7 @@ import top.kaluna.wiki.domain.EbookExample;
 import top.kaluna.wiki.mapper.EbookMapper;
 import top.kaluna.wiki.req.EbookReq;
 import top.kaluna.wiki.resp.EbookResp;
+import top.kaluna.wiki.resp.PageResp;
 import top.kaluna.wiki.util.CopyUtil;
 
 import javax.annotation.Resource;
@@ -27,14 +28,15 @@ public class EbookService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
 
-    public List<EbookResp> list(EbookReq ebookReq){
+    public PageResp<EbookResp> list(EbookReq ebookReq){
 
         EbookExample ebookExample = new EbookExample();
         final EbookExample.Criteria criteria = ebookExample.createCriteria();
         if(!ObjectUtils.isEmpty(ebookReq.getName())){
             criteria.andNameLike("%"+ebookReq.getName()+"%");
         }
-        PageHelper.startPage(1, 3);
+        //两个请求参数
+        PageHelper.startPage(ebookReq.getPage(), ebookReq.getSize());
         final List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebooks);
@@ -43,6 +45,9 @@ public class EbookService {
 
         final List<EbookResp> respsList = CopyUtil.copyList(ebooks, EbookResp.class);
 
-        return respsList;
+        PageResp<EbookResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(respsList);
+        return pageResp;
     }
 }

@@ -4,7 +4,7 @@ package top.kaluna.wiki.req;
  * @author Yuery
  * @date 2022/1/16/0016 - 14:40
  */
-public class EbookReq {
+public class EbookReq extends PageReq{
     private int id;
 
     private String name;

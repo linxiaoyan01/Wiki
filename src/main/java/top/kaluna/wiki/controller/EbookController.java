@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 import top.kaluna.wiki.req.EbookReq;
 import top.kaluna.wiki.resp.CommonResp;
 import top.kaluna.wiki.resp.EbookResp;
+import top.kaluna.wiki.resp.PageResp;
 import top.kaluna.wiki.service.EbookService;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author Yuery
@@ -23,9 +23,9 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/list")
-    public CommonResp<List<EbookResp>> list(EbookReq ebookReq){
-        CommonResp<List<EbookResp>> resp = new CommonResp<>();
-        List<EbookResp> list = ebookService.list(ebookReq);
+    public CommonResp<PageResp<EbookResp>> list(EbookReq ebookReq){
+        CommonResp<PageResp<EbookResp>> resp = new CommonResp<>();
+        PageResp<EbookResp> list = ebookService.list(ebookReq);
         resp.setContent(list);
         return resp;
     }
