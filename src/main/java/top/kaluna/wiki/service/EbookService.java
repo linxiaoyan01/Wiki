@@ -14,6 +14,7 @@ import top.kaluna.wiki.req.EbookSaveReq;
 import top.kaluna.wiki.resp.EbookQueryResp;
 import top.kaluna.wiki.resp.PageResp;
 import top.kaluna.wiki.util.CopyUtil;
+import top.kaluna.wiki.util.SnowFlake;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,6 +27,9 @@ import java.util.List;
 public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
 
     private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
 
@@ -54,11 +58,16 @@ public class EbookService {
 
     public void save(EbookSaveReq ebookQueryReq) {
         Ebook ebook = CopyUtil.copy(ebookQueryReq, Ebook.class);
-        if(ObjectUtils.isEmpty(ebook)){
+        if(ObjectUtils.isEmpty(ebookQueryReq.getId())){
             //新增
+            ebook.setId(snowFlake.nextId());
             ebookMapper.insert(ebook);
         }else {
             ebookMapper.updateByPrimaryKey(ebook);
         }
+    }
+
+    public void delete(Long id) {
+        ebookMapper.deleteByPrimaryKey(id);
     }
 }

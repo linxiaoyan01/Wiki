@@ -3,6 +3,11 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
+      <p>
+        <a-button type="primary" @click="add()" size="large">
+          新增
+        </a-button>
+      </p>
       <a-table
           :columns="columns"
           :row-key="record => record.id"
@@ -142,6 +147,7 @@
      const handleModalOk = () =>{
        modalLoading.value = true;
        axios.post("/ebook/save", ebook.value).then((response)=>{
+         console.log("1111")
          const data = response.data; //data = commonResp
          if(data.success){
            modalLoading.value = false;
@@ -154,9 +160,21 @@
          })
        });
      };
+     /**
+      * 编辑
+      * @param record
+      */
      const edit = (record: any)=>{
        modalVisible.value = true;
        ebook.value = record
+     }
+     /**
+      * 新增
+      * @param record
+      */
+     const add = ()=>{
+       modalVisible.value = true;
+       ebook.value = {}
      }
      onMounted(()=>{
        handleQuery({
@@ -172,7 +190,7 @@
        handleTableChange,
 
        edit,
-
+       add,
        ebook,
        modalVisible,
        modalLoading,
