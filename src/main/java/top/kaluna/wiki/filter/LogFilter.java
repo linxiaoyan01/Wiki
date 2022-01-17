@@ -12,6 +12,11 @@ import java.io.IOException;
 /**
  * @author Yuery
  * @date 2022/1/15/0015 - 23:27
+ *
+ */
+
+/**
+ * 过滤器是给web容器用的
  */
 @Component
 public class LogFilter implements Filter {
