@@ -12,6 +12,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  * @date 2022/1/15/0015 - 23:24
  */
 /**
+ * number类型精度为16位，而雪花算法生成的id为19位，因此会导致进度丢失
  * 统一注解，解决前后端交互Long类型精度丢失的问题
  */
 
