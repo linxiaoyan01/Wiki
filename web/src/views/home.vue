@@ -64,13 +64,14 @@ export default defineComponent({
     //console.log("setup")
     const ebooks = ref();
     //const ebooks1 = reactive({books: []});
-    onMounted(()=>{
-      handleQueryCategory();
-      //console.log("onMounted");
+
+
+    const handleQueryEbook = ()=>{
       axios.get("/ebook/list",{
         params:{
           page:1,
-          size:1000
+          size:1000,
+          categoryId2: categoryId2
         }
       }).then(function (response){
         const data = response.data;
@@ -78,6 +79,11 @@ export default defineComponent({
         //ebooks1.books = data.content;
         //console.log(response)
       });
+    }
+    onMounted(()=>{
+      handleQueryCategory();
+      //console.log("onMounted");
+      //handleQueryEbook();
     });
     const pagination = {
       onChange: (page: number) => {
@@ -119,9 +125,16 @@ export default defineComponent({
       });
     };
     const isShowWelcome = ref(true);
+    let categoryId2 = 0;
     const handleClick = (value: any) => {
       console.log("menu click", value);
-      isShowWelcome.value = value.key === 'welcome';
+      if(value.key === 'welcome'){
+        isShowWelcome.value = true;
+      }else {
+        categoryId2 = value.key
+        isShowWelcome.value = false;
+        handleQueryEbook();
+      }
     };
 
     return{
