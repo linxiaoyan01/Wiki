@@ -68,9 +68,9 @@
       </a-form-item>
       <a-form-item label="分类">
         <a-cascader
-          v-model:value="categoryIds"
-          :field-names="{label:'name',value:'id',children:'children'}"
-          :option="level1"
+            v-model:value="categoryIds"
+            :field-names="{ label: 'name', value: 'id', children: 'children' }"
+            :options="level1"
         />
       </a-form-item>
       <a-form-item label="描述">
@@ -215,23 +215,30 @@
      /**
       * 查询所有分类
       */
+     let categorys: any;
      const handleQueryCategory = () => {
        loading.value = true;
        axios.get("/category/all").then((response) => {
          loading.value = false;
          const data = response.data;
          if (data.success) {
-           const categorys = data.content;
-           console.log("原始数组", categorys);
+           categorys = data.content;
+           console.log("原始数组：", categorys);
 
            level1.value = [];
            level1.value = Tool.array2Tree(categorys, 0);
-           console.log("树形结构:", level1.value);
+           console.log("树形结构：", level1.value);
+
+           // 加载完分类后，再加载电子书，否则如果分类树加载很慢，则电子书渲染会报错
+           handleQuery({
+             page: 1,
+             size: pagination.value.pageSize,
+           });
          } else {
            message.error(data.message);
          }
-       })
-     }
+       });
+     };
      const handleDelete = (id: number) => {
        axios.delete("/ebook/delete/" + id).then((response) => {
          const data = response.data; //data = commonResp
@@ -243,7 +250,7 @@
            })
          }
        });
-     }
+     };
      onMounted(() => {
        handleQueryCategory();
        handleQuery({
@@ -268,7 +275,7 @@
        handleModalOk,
        handleQuery,
        categoryIds,
-       level1
+       level1,
      }
    }
  })
