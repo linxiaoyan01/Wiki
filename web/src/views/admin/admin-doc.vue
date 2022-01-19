@@ -197,7 +197,35 @@
        setDisable(treeSelectData.value, record.id);
        //为选择树添加一个无
        treeSelectData.value.unshift({id:0, name:'无'});
+     };
+     //查找整根树枝
+     let ids: any[] = [];
+     const getDelteIds = (treeSelectData: any, id: any) =>{
+       for(let i = 0; i < treeSelectData.length; i++){
+         const node = treeSelectData[i];
+         if(node.id === id){
+           //如果目前节点就是目标节点
+           console.log("disabled", node);
+           //node.disable = true;
+           //将目标id放入结果集ids
+           ids.push(id);
+           //遍历所有子节点
+           const children = node.children;
+           if(Tool.isNotEmpty(children)){
+             for(let j = 0; j < children.length; j++){
+               getDelteIds(children, children[j].id)
+             }
+           }
+         }else {
+           //如果当前节点不是目标节点，则到其子节点再找找看
+           const children = node.children;
+           if(Tool.isNotEmpty(children)){
+             getDelteIds(children, id)
+           }
+         }
+       }
      }
+
      /**
       * 新增
       * @param record
@@ -214,7 +242,8 @@
        treeSelectData.value.unshift({id: 0, name: '无'})
      }
      const handleDelete = (id: number)=>{
-       axios.delete("/doc/delete/"+id).then((response)=>{
+       getDelteIds(level1.value,id);
+       axios.delete("/doc/delete/"+ids.join(",")).then((response)=>{
          const data = response.data; //data = commonResp
          if(data.success){
            //重新加载列表
