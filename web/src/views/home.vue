@@ -9,11 +9,8 @@
           @click="handleClick"
       >
         <a-menu-item key="welcome">
-          <router-link :to="'/'">
             <MailOutlined />
             <span>欢迎</span>
-          </router-link>
-
         </a-menu-item>
         <a-sub-menu v-for="item in level1" :key="item.id">
           <template v-slot:title>
@@ -28,7 +25,10 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large" :data-source="ebooks" :grid="{gutter:20,column:3}">
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>欢迎</h1>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :data-source="ebooks" :grid="{gutter:20,column:3}">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
@@ -118,10 +118,12 @@ export default defineComponent({
         }
       });
     };
-
-    const handleClick = () => {
-      console.log("menu click")
+    const isShowWelcome = ref(true);
+    const handleClick = (value: any) => {
+      console.log("menu click", value);
+      isShowWelcome.value = value.key === 'welcome';
     };
+
     return{
       ebooks,
       //ebooks2: toRef(ebooks1, "books"),
@@ -129,6 +131,7 @@ export default defineComponent({
       actions,
       handleClick,
       level1,
+      isShowWelcome
     }
 
   }
