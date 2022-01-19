@@ -35,7 +35,6 @@
                 ok-text="Yes"
                 cancel-text="No"
                 @confirm="handleDelete(record.id)"
-                @cancel="cancel"
             >
               <a-button type="danger">
                 删除
@@ -73,15 +72,21 @@
       <a-form-item label="顺序">
         <a-input v-model:value="doc.sort" />
       </a-form-item>
+      <a-form-item label="内容">
+        <div id="content"></div>
+      </a-form-item>
     </a-form>
   </a-modal>
 </template>
+
 <script lang="ts">
  import {defineComponent, onMounted, ref} from 'vue';
  import axios from 'axios';
  import {message} from 'ant-design-vue'
  import {Tool} from "@/util/tool"
  import {useRoute} from "vue-router";
+ import E from 'wangeditor';
+
  export default defineComponent({
    name: 'AdminDoc',
    setup(){
@@ -124,6 +129,7 @@
        }
      ];
      const level1 = ref();
+
      /**
       * 数据查询
       * @param params
@@ -147,6 +153,7 @@
      const doc = ref({});
      const modalVisible = ref(false);
      const modalLoading = ref(false);
+
      const handleModalOk = () =>{
        modalLoading.value = true;
        axios.post("/doc/save", doc.value).then((response)=>{
@@ -189,6 +196,7 @@
       * @param record
       */
      const edit = (record: any)=>{
+
        modalVisible.value = true;
        doc.value = Tool.copy(record);
 
@@ -197,10 +205,13 @@
        setDisable(treeSelectData.value, record.id);
        //为选择树添加一个无
        treeSelectData.value.unshift({id:0, name:'无'});
+       setTimeout(function (){
+         editor.create();
+       }, 1000);
      };
      //查找整根树枝
-     let ids: any[] = [];
-     const getDelteIds = (treeSelectData: any, id: any) =>{
+     let ids: Array<string>[] = [];
+     const getDeleteIds = (treeSelectData: any, id: any) =>{
        for(let i = 0; i < treeSelectData.length; i++){
          const node = treeSelectData[i];
          if(node.id === id){
@@ -213,14 +224,14 @@
            const children = node.children;
            if(Tool.isNotEmpty(children)){
              for(let j = 0; j < children.length; j++){
-               getDelteIds(children, children[j].id)
+               getDeleteIds(children, children[j].id)
              }
            }
          }else {
            //如果当前节点不是目标节点，则到其子节点再找找看
            const children = node.children;
            if(Tool.isNotEmpty(children)){
-             getDelteIds(children, id)
+             getDeleteIds(children, id)
            }
          }
        }
@@ -240,17 +251,23 @@
 
        //为选择树添加一个无
        treeSelectData.value.unshift({id: 0, name: '无'})
+       setTimeout(function (){
+         editor.create();
+       }, 1000);
      }
      const handleDelete = (id: number)=>{
-       getDelteIds(level1.value,id);
+       getDeleteIds(level1.value,id);
        axios.delete("/doc/delete/"+ids.join(",")).then((response)=>{
          const data = response.data; //data = commonResp
          if(data.success){
            //重新加载列表
-           handleQuery()
+           handleQuery();
          }
        });
      }
+
+     let editor: E;
+     editor = new E('#content');
      onMounted(()=>{
        handleQuery();
      });
@@ -260,7 +277,6 @@
        level1,
        columns,
        loading,
-
        edit,
        add,
        handleDelete,
