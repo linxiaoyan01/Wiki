@@ -108,6 +108,7 @@
  export default defineComponent({
    name: 'AdminDoc',
    setup(){
+
      const route = useRoute();
      console.log("路由：", route);
      console.log("route.path",route.path);
@@ -124,6 +125,8 @@
      const treeSelectData = ref();
      treeSelectData.value = [];
 
+     const doc = ref();
+     doc.value = {}
      const docs = ref();
      const loading = ref(false);
      const columns = [
@@ -140,10 +143,28 @@
      ];
      const level1 = ref();
      level1.value = [];
-     /**
-      * 数据查询
-      * @param params
-      */
+     const modalVisible = ref(false);
+     const modalLoading = ref(false);
+     let editor: E;
+     editor = new E('#content');
+     editor.config.zIndex = 0;
+     let ids: Array<string>[] = [];
+     const handleSave = () =>{
+       modalLoading.value = true;
+       doc.value.content=editor.txt.html();
+       console.log(doc.value)
+       axios.post("/doc/save", doc.value).then((response)=>{
+         modalLoading.value = false;
+         const data = response.data; //data = commonResp
+         if(data.success){
+           modalVisible.value = false;
+           //重新加载列表
+           handleQuery();
+         }else{
+           message.error(data.message);
+         }
+       });
+     };
      const handleQuery = ()=>{
        loading.value = true;
        axios.get("/doc/all").then((response)=>{
@@ -156,26 +177,6 @@
            console.log("树形结构:",level1);
          }else {
            message.error(data.message)
-         }
-       });
-     };
-
-     const doc = ref({});
-     const modalVisible = ref(false);
-     const modalLoading = ref(false);
-
-
-     const handleSave = () =>{
-       modalLoading.value = true;
-       axios.post("/doc/save", doc.value).then((response)=>{
-         modalLoading.value = false;
-         const data = response.data; //data = commonResp
-         if(data.success){
-           modalVisible.value = false;
-           //重新加载列表
-           handleQuery();
-         }else{
-           message.error(data.message);
          }
        });
      };
@@ -202,13 +203,10 @@
          }
        }
      }
-     /**
-      * 编辑
-      * @param record
-      */
      const edit = (record: any)=>{
 
        modalVisible.value = true;
+
        doc.value = Tool.copy(record);
 
        //不能选择当前节点机器所有子孙节点，作为父节点，会使树断开
@@ -218,7 +216,6 @@
        treeSelectData.value.unshift({id:0, name:'无'});
      };
      //查找整根树枝
-     let ids: Array<string>[] = [];
      const getDeleteIds = (treeSelectData: any, id: any) =>{
        for(let i = 0; i < treeSelectData.length; i++){
          const node = treeSelectData[i];
@@ -244,16 +241,11 @@
          }
        }
      }
-
-     /**
-      * 新增
-      * @param record
-      */
      const add = ()=>{
        modalVisible.value = true;
-       doc.value = {
-          ebookId: route.query.ebookId
-       };
+       doc.value ={
+         ebookId: route.query.ebookId
+       }
 
        treeSelectData.value = Tool.copy(level1.value);
 
@@ -270,17 +262,13 @@
          }
        });
      }
-
-     let editor: E;
-     editor = new E('#content');
-     editor.config.zIndex = 0;
      onMounted(()=>{
        handleQuery();
        editor.create();
      });
      return {
        param,
-       //docs,
+       docs,
        level1,
        columns,
        loading,

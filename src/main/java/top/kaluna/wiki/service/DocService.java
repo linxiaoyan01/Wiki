@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import top.kaluna.wiki.domain.Content;
 import top.kaluna.wiki.domain.Doc;
 import top.kaluna.wiki.domain.DocExample;
+import top.kaluna.wiki.mapper.ContentMapper;
 import top.kaluna.wiki.mapper.DocMapper;
 import top.kaluna.wiki.req.DocQueryReq;
 import top.kaluna.wiki.req.DocSaveReq;
@@ -30,6 +32,9 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
 
@@ -59,12 +64,20 @@ public class DocService {
 
     public void save(DocSaveReq docQueryReq) {
         Doc doc = CopyUtil.copy(docQueryReq, Doc.class);
+        Content content = CopyUtil.copy(docQueryReq, Content.class);
         if(ObjectUtils.isEmpty(docQueryReq.getId())){
             //新增
             doc.setId(snowFlake.nextId());
             docMapper.insert(doc);
+            content.setId(doc.getId());
+            contentMapper.insert(content);
         }else {
+            //更新
             docMapper.updateByPrimaryKey(doc);
+            int count = contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            if(count == 0){
+                contentMapper.insert(content);
+            }
         }
     }
 
