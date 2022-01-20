@@ -12,10 +12,12 @@ import top.kaluna.wiki.domain.UserExample;
 import top.kaluna.wiki.exception.BusinessException;
 import top.kaluna.wiki.exception.BusinessExceptionCode;
 import top.kaluna.wiki.mapper.UserMapper;
+import top.kaluna.wiki.req.UserLoginReq;
 import top.kaluna.wiki.req.UserQueryReq;
 import top.kaluna.wiki.req.UserResetPasswordReq;
 import top.kaluna.wiki.req.UserSaveReq;
 import top.kaluna.wiki.resp.PageResp;
+import top.kaluna.wiki.resp.UserLoginResp;
 import top.kaluna.wiki.resp.UserQueryResp;
 import top.kaluna.wiki.util.CopyUtil;
 import top.kaluna.wiki.util.SnowFlake;
@@ -105,6 +107,25 @@ public class UserService {
     }
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
+    }
+
+    public UserLoginResp login(UserLoginReq req) {
+        //我们只用用户名去数据库查，查完之后再对比密码
+        User userDb = selectByLoginName(req.getLoginName());
+        if(ObjectUtils.isEmpty(userDb)){
+            LOG.info("用户名不存在，{}",req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }else{
+            if(userDb.getPassword().equals(req.getPassword())){
+                //登录成功
+                UserLoginResp userLoginResp = CopyUtil.copy(userDb, UserLoginResp.class);
+                return userLoginResp;
+            }else{
+                //密码不对
+                LOG.info("密码不对，输入密码：{}，数据库密码：{}", req.getPassword(),userDb.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
     }
 }
 

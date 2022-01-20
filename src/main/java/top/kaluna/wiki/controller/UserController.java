@@ -2,11 +2,13 @@ package top.kaluna.wiki.controller;
 
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+import top.kaluna.wiki.req.UserLoginReq;
 import top.kaluna.wiki.req.UserQueryReq;
 import top.kaluna.wiki.req.UserResetPasswordReq;
 import top.kaluna.wiki.req.UserSaveReq;
 import top.kaluna.wiki.resp.CommonResp;
 import top.kaluna.wiki.resp.PageResp;
+import top.kaluna.wiki.resp.UserLoginResp;
 import top.kaluna.wiki.resp.UserQueryResp;
 import top.kaluna.wiki.service.UserService;
 
@@ -52,4 +54,13 @@ public class UserController {
         userService.resetPassword(req);
         return resp;
     }
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes(StandardCharsets.UTF_8)));
+        CommonResp<UserLoginResp> resp = new CommonResp();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
+        return resp;
+    }
+
 }
