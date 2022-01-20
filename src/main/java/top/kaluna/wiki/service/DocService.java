@@ -99,6 +99,10 @@ public class DocService {
         final List<DocQueryResp> docQueryResps = CopyUtil.copyList(docList, DocQueryResp.class);
         return docQueryResps;
     }
+    public String findContent(Long id) {
+        Content content = contentMapper.selectByPrimaryKey(id);
+        return content.getContent();
+    }
 }
 
 
