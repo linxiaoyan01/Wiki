@@ -167,7 +167,7 @@
      };
      const handleQuery = ()=>{
        loading.value = true;
-       axios.get("/doc/all"+route.query.ebookId).then((response)=>{
+       axios.get("/doc/all/"+route.query.ebookId).then((response)=>{
          loading.value = false;
          const data = response.data;
          if(data.success){
@@ -175,6 +175,10 @@
            level1.value = [];
            level1.value = Tool.array2Tree(docs.value,0);
            console.log("树形结构:",level1);
+           //父文档下拉框初始化，相当于点击新增
+           treeSelectData.value = Tool.copy(level1.value);
+           //为选择树添加一个无
+           treeSelectData.value.unshift({id:0, name:'无'});
          }else {
            message.error(data.message)
          }
