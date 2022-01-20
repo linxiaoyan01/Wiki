@@ -134,7 +134,9 @@
      treeSelectData.value = [];
 
      const doc = ref();
-     doc.value = {}
+     doc.value = {
+       ebookId: route.query.ebookId
+     }
      const docs = ref();
      const loading = ref(false);
      const columns = [
