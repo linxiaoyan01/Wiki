@@ -1,31 +1,38 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo" />
     <a-menu
         theme="dark"
         mode="horizontal"
         v-model:selectedKeys="selectedKeys1"
         :style="{ lineHeight: '64px' }"
+        class="left"
     >
-      <a-menu-item key="/">
-        <router-link to="/">首页</router-link>
-      </a-menu-item>
-      <a-menu-item key="/admin/user">
-        <router-link to="/admin/user">用户管理</router-link>
-      </a-menu-item>
-      <a-menu-item key="/admin/ebook">
-        <router-link to="/admin/ebook">电子书管理</router-link>
-      </a-menu-item>
-      <a-menu-item key="/admin/category">
-        <router-link to="/admin/category">分类管理</router-link>
-      </a-menu-item>
-      <a-menu-item key="/about">
-        <router-link to="/about">关于我们</router-link>
-      </a-menu-item>
-      <a-menu-item  @click="showLoginModal" class="login-menu">登陆</a-menu-item>
+        <a-menu-item key="/">
+          <router-link to="/">首页</router-link>
+        </a-menu-item>
+        <a-menu-item key="/admin/user">
+          <router-link to="/admin/user">用户管理</router-link>
+        </a-menu-item>
+        <a-menu-item key="/admin/ebook">
+          <router-link to="/admin/ebook">电子书管理</router-link>
+        </a-menu-item>
+        <a-menu-item key="/admin/category">
+          <router-link to="/admin/category">分类管理</router-link>
+        </a-menu-item>
+        <a-menu-item key="/about">
+          <router-link to="/about">关于我们</router-link>
+        </a-menu-item>
+        <a-menu-item class="login-menu">
+          <a  v-show="user.id">
+            <span>您好：{{user.name}}</span>
+          </a>
+          <a  v-show="!user.id" @click="showLoginModal">
+            <span>登录</span>
+          </a>
+        </a-menu-item>
     </a-menu>
     <a-modal
-        title="登录"
+        title="登陆"
         v-model:visible="loginModalVisible"
         :confirm-loading="loginModalLoading"
         @ok="login"
@@ -54,6 +61,9 @@ export default defineComponent({
   name: 'the-header',
   setup(){
     // 用来登录
+    const user = ref();
+    user.value = {};
+    // 用来登录
     const loginUser = ref({
       loginName: "test",
       password: "test"
@@ -75,6 +85,7 @@ export default defineComponent({
         if (data.success) {
           loginModalVisible.value = false;
           message.success("登录成功！");
+          user.value = data.content;
         } else {
           message.error(data.message);
         }
@@ -87,10 +98,18 @@ export default defineComponent({
       showLoginModal,
       loginUser,
       login,
+      user,
     }
   }
 });
 </script>
 <style>
-
+.ant-menu-overflow{
+  display: flex;
+}
+.login-menu {
+  float: right;
+  color: white;
+  padding-left: 10px;
+}
 </style>
