@@ -1,44 +1,59 @@
 <template>
   <a-layout-header class="header">
+    <div class="logo">甲蛙知识库</div>
     <a-menu
         theme="dark"
         mode="horizontal"
-        v-model:selectedKeys="selectedKeys1"
         :style="{ lineHeight: '64px' }"
-        class="left"
     >
-        <a-menu-item key="/">
-          <router-link to="/">首页</router-link>
-        </a-menu-item>
-        <a-menu-item key="/admin/user">
-          <router-link to="/admin/user">用户管理</router-link>
-        </a-menu-item>
-        <a-menu-item key="/admin/ebook">
-          <router-link to="/admin/ebook">电子书管理</router-link>
-        </a-menu-item>
-        <a-menu-item key="/admin/category">
-          <router-link to="/admin/category">分类管理</router-link>
-        </a-menu-item>
-        <a-menu-item key="/about">
-          <router-link to="/about">关于我们</router-link>
-        </a-menu-item>
-        <a-menu-item class="login-menu">
+      <a-menu-item key="/">
+        <router-link to="/">首页</router-link>
+      </a-menu-item>
+      <a-menu-item key="/admin/user" >
+        <router-link to="/admin/user">用户管理</router-link>
+      </a-menu-item>
+      <a-menu-item key="/admin/ebook" >
+        <router-link to="/admin/ebook">电子书管理</router-link>
+      </a-menu-item>
+      <a-menu-item key="/admin/category" >
+        <router-link to="/admin/category">分类管理</router-link>
+      </a-menu-item>
+      <a-menu-item key="/about">
+        <router-link to="/about">关于我们</router-link>
+      </a-menu-item>
+      <a-menu-item key="/aliyun">
+        <router-link to="/aliyun">阿里云优惠</router-link>
+      </a-menu-item>
+      <a-menu-item>
+        <a v-show="user.id">
+          <span>您好：{{user.name}}</span>
+        </a>
+        <a  v-show="!user.id" @click="showLoginModal">
+          <span>登录</span>
+        </a>
+      </a-menu-item>
+      <a-menu-item>
+        <a-popconfirm
+            title="确认退出登录?"
+            ok-text="是"
+            cancel-text="否"
+            @confirm="logout()"
+        >
           <a  v-show="user.id">
-            <span>您好：{{user.name}}</span>
+            <span>退出登录</span>
           </a>
-          <a  v-show="!user.id" @click="showLoginModal">
-            <span>登录</span>
-          </a>
-        </a-menu-item>
+        </a-popconfirm>
+      </a-menu-item>
     </a-menu>
+
     <a-modal
-        title="登陆"
+        title="登录"
         v-model:visible="loginModalVisible"
         :confirm-loading="loginModalLoading"
         @ok="login"
     >
       <a-form :model="loginUser" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-        <a-form-item label="登陆名">
+        <a-form-item label="登录名">
           <a-input v-model:value="loginUser.loginName" />
         </a-form-item>
         <a-form-item label="密码">
@@ -48,11 +63,11 @@
     </a-modal>
   </a-layout-header>
 </template>
-<script lang="ts">
 
+<script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import axios from "axios";
-import { message } from "ant-design-vue";
+import axios from 'axios';
+import { message } from 'ant-design-vue';
 import store from "@/store";
 
 declare let hexMd5: any;
@@ -60,10 +75,10 @@ declare let KEY: any;
 
 export default defineComponent({
   name: 'the-header',
-  setup(){
-    const user = computed(() =>{
-      store.state.user
-    });
+  setup () {
+    // 登录后保存
+    const user = computed(() => store.state.user);
+
     // 用来登录
     const loginUser = ref({
       loginName: "test",
@@ -86,7 +101,22 @@ export default defineComponent({
         if (data.success) {
           loginModalVisible.value = false;
           message.success("登录成功！");
-          store.commit("setUser", user.value);
+
+          store.commit("setUser", data.content);
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    // 退出登录
+    const logout = () => {
+      console.log("退出登录开始");
+      axios.get('/user/logout/' + user.value.token).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          message.success("退出登录成功！");
+          store.commit("setUser", {});
         } else {
           message.error(data.message);
         }
@@ -100,13 +130,19 @@ export default defineComponent({
       loginUser,
       login,
       user,
+      logout
     }
   }
 });
 </script>
+
 <style>
-.ant-menu-overflow{
-  display: flex;
+.logo {
+  width: 120px;
+  height: 31px;
+  float: left;
+  color: white;
+  font-size: 18px;
 }
 .login-menu {
   float: right;
