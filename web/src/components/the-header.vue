@@ -22,9 +22,7 @@
       <a-menu-item key="/about">
         <router-link to="/about">关于我们</router-link>
       </a-menu-item>
-      <a class="login-menu" @click="showLoginModal">
-        <span>登录</span>
-      </a>
+      <a-menu-item  @click="showLoginModal" class="login-menu">登陆</a-menu-item>
     </a-menu>
     <a-modal
         title="登录"
@@ -33,7 +31,7 @@
         @ok="login"
     >
       <a-form :model="loginUser" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-        <a-form-item label="登录名">
+        <a-form-item label="登陆名">
           <a-input v-model:value="loginUser.loginName" />
         </a-form-item>
         <a-form-item label="密码">
@@ -46,6 +44,12 @@
 <script lang="ts">
 
 import { defineComponent, ref, computed } from 'vue';
+import axios from "axios";
+import { message } from "ant-design-vue";
+
+declare let hexMd5: any;
+declare let KEY: any;
+
 export default defineComponent({
   name: 'the-header',
   setup(){
@@ -63,7 +67,20 @@ export default defineComponent({
     // 登录
     const login = () => {
       console.log("开始登录");
+      loginModalLoading.value = true;
+      loginUser.value.password = hexMd5(loginUser.value.password + KEY);
+      axios.post('/user/login', loginUser.value).then((response) => {
+        loginModalLoading.value = false;
+        const data = response.data;
+        if (data.success) {
+          loginModalVisible.value = false;
+          message.success("登录成功！");
+        } else {
+          message.error(data.message);
+        }
+      });
     };
+
     return {
       loginModalVisible,
       loginModalLoading,
@@ -74,3 +91,6 @@ export default defineComponent({
   }
 });
 </script>
+<style>
+
+</style>

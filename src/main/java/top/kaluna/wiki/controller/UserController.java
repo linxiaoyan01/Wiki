@@ -47,7 +47,7 @@ public class UserController {
         userService.delete(id);
         return resp;
     }
-    @GetMapping("/reset-password")
+    @PostMapping("/reset-password")
     public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes(StandardCharsets.UTF_8)));
         CommonResp resp = new CommonResp();
