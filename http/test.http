@@ -17,3 +17,9 @@ name=TEST
 
 ###
 GET http://localhost:8080/test/list
+###
+GET http://localhost:8080/test/redis/set/123/test
+Accept: application/json
+
+###
+GET http://localhost:8080/test/redis/get/139594954136752128

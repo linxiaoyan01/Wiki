@@ -37,6 +37,7 @@ public class UserService {
     @Resource
     private SnowFlake snowFlake;
 
+
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     public PageResp<UserQueryResp> list(UserQueryReq userQueryReq){
@@ -127,5 +128,6 @@ public class UserService {
             }
         }
     }
+
 }
 
