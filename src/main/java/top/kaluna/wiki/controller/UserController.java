@@ -73,11 +73,13 @@ public class UserController {
         CommonResp<UserLoginResp> resp = new CommonResp<>();
         UserLoginResp userLoginResp = userService.login(req);
         Long token = snowFlake.nextId();
+        userLoginResp.setToken(token.toString());
         LOG.info("单点登录token:{}，并放入redis中", token);
 
-        redisTemplate.opsForValue().set(token, JSONObject.toJSONString(userLoginResp), 3600*24, TimeUnit.SECONDS);
-        LOG.info("成功放入");
+        redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600*24, TimeUnit.SECONDS);
+        LOG.info("成功放入redis");
         resp.setContent(userLoginResp);
+        LOG.info("userLoginResp：token="+userLoginResp.getToken());
         return resp;
     }
     @GetMapping("/logout/{token}")

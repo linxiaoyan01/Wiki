@@ -1,6 +1,6 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo">甲蛙知识库</div>
+    <div class="logo">知识库</div>
     <a-menu
         theme="dark"
         mode="horizontal"
@@ -103,6 +103,7 @@ export default defineComponent({
           message.success("登录成功！");
 
           store.commit("setUser", data.content);
+          console.log(store.state.user)
         } else {
           message.error(data.message);
         }

@@ -91,6 +91,7 @@ import { defineComponent, onMounted, ref } from 'vue';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import {Tool} from "@/util/tool";
+import store from "@/store";
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -142,6 +143,7 @@ export default defineComponent({
           loginName: param.value.loginName
         }
       }).then((response) => {
+        console.log("user-token="+store.state.user.token);
         loading.value = false;
         const data = response.data;
         if (data.success) {
