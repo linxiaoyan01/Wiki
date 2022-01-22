@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import top.kaluna.wiki.domain.Content;
 import top.kaluna.wiki.domain.Doc;
@@ -77,6 +78,7 @@ public class DocService {
         return pageResp;
     }
 
+    @Transactional
     public void save(DocSaveReq docQueryReq) {
         Doc doc = CopyUtil.copy(docQueryReq, Doc.class);
         Content content = CopyUtil.copy(docQueryReq, Content.class);
