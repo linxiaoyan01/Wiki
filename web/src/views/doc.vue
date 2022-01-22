@@ -15,7 +15,20 @@
           </a-tree>
         </a-col>
         <a-col :span="18">
+          <div>
+            <h2>{{doc.name}}</h2>
+            <div>
+              <span>阅读数：{{doc.viewCount}}</span> &nbsp; &nbsp;
+              <span>点赞数：{{doc.voteCount}}</span>
+            </div>
+            <a-divider style="height: 2px; background-color: #9999cc"/>
+          </div>
           <div :innerHTML="html" class="wangeditor"></div>
+          <div class="vote-div">
+            <a-button type="primary" shape="round" :size="'small'" @click="vote">
+              <template #icon><LikeOutlined /> &nbsp;点赞：{{doc.voteCount}} </template>
+            </a-button>
+          </div>
         </a-col>
       </a-row>
     </a-layout-content>
@@ -41,6 +54,20 @@ export default defineComponent({
     level1.value = [];
     const defaultSelectedKeys = ref();
     defaultSelectedKeys.value = [];
+    //当前选中的文档
+    const doc = ref();
+    doc.value = {};
+    //点赞
+    const vote = () => {
+      axios.get('/doc/vote/' + doc.value.id).then((response)=>{
+        const data = response.data;
+        if(data.success){
+          doc.value.voteCount++;
+        }else{
+          message.error(data.message);
+        }
+      });
+    };
     //内容查询
     const handleQueryContent = (id:number)=>{
       axios.get("/doc/find-content/"+id).then((response)=>{
@@ -63,7 +90,8 @@ export default defineComponent({
 
           if(Tool.isNotEmpty(level1)){
             defaultSelectedKeys.value = [level1.value[0].id];
-            handleQueryContent(level1.value[0].id)
+            handleQueryContent(level1.value[0].id);
+            doc.value = level1.value[0];
           }
         }else{
           message.error(data.message);
@@ -74,6 +102,8 @@ export default defineComponent({
     const onSelect = (selectedKeys: any, info: any)=>{
       console.log('selected',selectedKeys,info);
       if(Tool.isNotEmpty(selectedKeys)){
+        //选中某一节点的时候，加载该节点的文档信息
+        doc.value = info.selectedNodes[0].props;
         //加载内容
         handleQueryContent(selectedKeys[0]);
       }
@@ -85,7 +115,9 @@ export default defineComponent({
       level1,
       onSelect,
       html,
-      defaultSelectedKeys
+      defaultSelectedKeys,
+      doc,
+      vote
     }
   }
 });
@@ -143,4 +175,10 @@ export default defineComponent({
   font-size: 16px !important;
   font-weight: 600;
 }
+/* 点赞 */
+.vote-div {
+  padding: 15px;
+  text-align: center;
+}
+
 </style>

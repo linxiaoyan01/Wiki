@@ -116,6 +116,10 @@ public class DocService {
         }
         return "";
     }
+
+    public void vote(Long id) {
+        docMapperCust.increaseVoteCount(id);
+    }
 }
 
 
