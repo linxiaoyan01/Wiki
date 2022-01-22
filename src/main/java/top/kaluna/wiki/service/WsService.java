@@ -22,6 +22,5 @@ public class WsService {
         //往所有的session推送消息
         MDC.put("LOG_ID",logId);
         webSocketServer.sendInfo(message);
-
     }
 }
