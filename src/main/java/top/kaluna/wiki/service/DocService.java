@@ -11,6 +11,7 @@ import top.kaluna.wiki.domain.Doc;
 import top.kaluna.wiki.domain.DocExample;
 import top.kaluna.wiki.mapper.ContentMapper;
 import top.kaluna.wiki.mapper.DocMapper;
+import top.kaluna.wiki.mapper.DocMapperCust;
 import top.kaluna.wiki.req.DocQueryReq;
 import top.kaluna.wiki.req.DocSaveReq;
 import top.kaluna.wiki.resp.DocQueryResp;
@@ -35,6 +36,10 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+    @Resource
+    private DocMapperCust docMapperCust;
+
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
 
@@ -68,6 +73,8 @@ public class DocService {
         if(ObjectUtils.isEmpty(docQueryReq.getId())){
             //新增
             doc.setId(snowFlake.nextId());
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             docMapper.insert(doc);
             content.setId(doc.getId());
             contentMapper.insert(content);
@@ -102,6 +109,8 @@ public class DocService {
     }
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
+        //文档阅读数加一
+        docMapperCust.increaseViewCount(id);
         if(content != null){
             return content.getContent();
         }
