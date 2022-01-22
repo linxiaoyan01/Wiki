@@ -8,7 +8,6 @@ import { defineComponent, computed, onMounted } from 'vue';
 import store from "@/store";
 import {Tool} from "@/util/tool";
 import { notification } from 'ant-design-vue';
-
 export default defineComponent({
   name: 'the-footer',
   setup(){

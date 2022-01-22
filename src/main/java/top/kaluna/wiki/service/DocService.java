@@ -22,6 +22,7 @@ import top.kaluna.wiki.util.CopyUtil;
 import top.kaluna.wiki.util.RedisUtil;
 import top.kaluna.wiki.util.RequestContext;
 import top.kaluna.wiki.util.SnowFlake;
+import top.kaluna.wiki.websocket.WebSocketServer;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -47,6 +48,8 @@ public class DocService {
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private WebSocketServer webSocketServer;
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
 
@@ -133,6 +136,9 @@ public class DocService {
         }else{
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
+        //往所有的session推送消息
+        final Doc docDb = docMapper.selectByPrimaryKey(id);
+        webSocketServer.sendInfo("《"+docDb.getName()+"》被点赞！");
     }
 
     public void updateEbookInfo() {
