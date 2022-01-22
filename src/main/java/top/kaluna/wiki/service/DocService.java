@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.kaluna.wiki.domain.Content;
@@ -22,7 +23,6 @@ import top.kaluna.wiki.util.CopyUtil;
 import top.kaluna.wiki.util.RedisUtil;
 import top.kaluna.wiki.util.RequestContext;
 import top.kaluna.wiki.util.SnowFlake;
-import top.kaluna.wiki.websocket.WebSocketServer;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -137,7 +137,8 @@ public class DocService {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
         final Doc docDb = docMapper.selectByPrimaryKey(id);
-        wsService.sendInfo("《"+docDb.getName()+"》被点赞！");
+        String logId = MDC.get("LOG_ID");
+        wsService.sendInfo("《"+docDb.getName()+"》被点赞！", logId);
     }
     public void updateEbookInfo() {
         docMapperCust.updateEbookInfo();
