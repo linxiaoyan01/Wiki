@@ -1,8 +1,24 @@
 package top.kaluna.wiki.service;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import top.kaluna.wiki.websocket.WebSocketServer;
+
+import javax.annotation.Resource;
+
 /**
  * @author Yuery
  * @date 2022/1/15/0015 - 23:36
  */
+@Service
 public class WsService {
+
+    @Resource
+    private WebSocketServer webSocketServer;
+
+    @Async
+    public void sendInfo(String message){
+        //往所有的session推送消息
+        webSocketServer.sendInfo(message);
+    }
 }

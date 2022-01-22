@@ -49,7 +49,7 @@ public class DocService {
     private RedisUtil redisUtil;
 
     @Resource
-    private WebSocketServer webSocketServer;
+    private WsService wsService;
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
 
@@ -136,11 +136,9 @@ public class DocService {
         }else{
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
-        //往所有的session推送消息
         final Doc docDb = docMapper.selectByPrimaryKey(id);
-        webSocketServer.sendInfo("《"+docDb.getName()+"》被点赞！");
+        wsService.sendInfo("《"+docDb.getName()+"》被点赞！");
     }
-
     public void updateEbookInfo() {
         docMapperCust.updateEbookInfo();
     }
