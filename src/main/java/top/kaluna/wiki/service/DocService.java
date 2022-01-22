@@ -9,6 +9,8 @@ import org.springframework.util.ObjectUtils;
 import top.kaluna.wiki.domain.Content;
 import top.kaluna.wiki.domain.Doc;
 import top.kaluna.wiki.domain.DocExample;
+import top.kaluna.wiki.exception.BusinessException;
+import top.kaluna.wiki.exception.BusinessExceptionCode;
 import top.kaluna.wiki.mapper.ContentMapper;
 import top.kaluna.wiki.mapper.DocMapper;
 import top.kaluna.wiki.mapper.DocMapperCust;
@@ -17,6 +19,8 @@ import top.kaluna.wiki.req.DocSaveReq;
 import top.kaluna.wiki.resp.DocQueryResp;
 import top.kaluna.wiki.resp.PageResp;
 import top.kaluna.wiki.util.CopyUtil;
+import top.kaluna.wiki.util.RedisUtil;
+import top.kaluna.wiki.util.RequestContext;
 import top.kaluna.wiki.util.SnowFlake;
 
 import javax.annotation.Resource;
@@ -39,6 +43,9 @@ public class DocService {
 
     @Resource
     private DocMapperCust docMapperCust;
+
+    @Resource
+    private RedisUtil redisUtil;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
@@ -118,7 +125,14 @@ public class DocService {
     }
 
     public void vote(Long id) {
-        docMapperCust.increaseVoteCount(id);
+        //docMapperCust.increaseVoteCount(id);
+        //远程IP+doc，id作为key，24小时内不能重复
+        String key = RequestContext.getRemoteAddr();
+        if(redisUtil.validateRepeat("DOC_VOTE_"+id+"_"+key, 3600*24)){
+            docMapperCust.increaseVoteCount(id);
+        }else{
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
     }
 }
 
