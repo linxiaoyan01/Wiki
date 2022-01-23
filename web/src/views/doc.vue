@@ -180,5 +180,9 @@ export default defineComponent({
   padding: 15px;
   text-align: center;
 }
-
+/*图片自适应*/
+.wangeditor img{
+  max-width: 100%;
+  height: auto;
+}
 </style>

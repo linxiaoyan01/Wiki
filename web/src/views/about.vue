@@ -1,5 +1,7 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <a-layout>
+    <a-layout-content :style="{background: '#fff'}">
+      <h1>Hello</h1>
+    </a-layout-content>
+  </a-layout>
 </template>
