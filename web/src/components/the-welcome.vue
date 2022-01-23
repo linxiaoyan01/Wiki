@@ -150,6 +150,7 @@ export default defineComponent({
       const xAxis = [];
       const seriesView = [];
       const seriesVote = [];
+      //遍历每一天的数据
       for (let i = 0; i < list.length; i++) {
         const record = list[i];
         xAxis.push(record.date);

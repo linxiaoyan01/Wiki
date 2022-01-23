@@ -1,5 +1,7 @@
 package top.kaluna.wiki.resp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -7,6 +9,7 @@ import java.util.Date;
  * @date 2022/1/15/0015 - 23:34
  */
 public class StatisticResp {
+    @JsonFormat(pattern = "MM-dd",timezone = "GMT+8")
     private Date date;
     private int viewCount;
     private int voteCount;
