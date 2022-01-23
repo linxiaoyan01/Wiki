@@ -2,8 +2,10 @@ package top.kaluna.wiki.service;
 
 import org.springframework.stereotype.Service;
 import top.kaluna.wiki.mapper.EbookSnapshotMapperCust;
+import top.kaluna.wiki.resp.StatisticResp;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author Yuery
@@ -17,5 +19,10 @@ public class EbookSnapshotService {
 
     public void genSnapshot() {
         ebookSnapshotMapperCust.genSnapshot();
+    }
+
+    public List<StatisticResp> getStatistic() {
+        return ebookSnapshotMapperCust.getStatistic();
+
     }
 }
