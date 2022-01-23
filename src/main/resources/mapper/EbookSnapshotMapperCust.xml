@@ -24,7 +24,7 @@
     </update>
     <select id="getStatistic" resultType="top.kaluna.wiki.resp.StatisticResp">
         select
-        t1.`date` as `date`
+        t1.`date` as `date`,
         sum(t1.view_count) as viewCount,
         sum(t1.vote_count) as voteCount,
         sum(t1.view_increase) as viewIncrease,
