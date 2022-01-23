@@ -23,3 +23,5 @@ Accept: application/json
 
 ###
 GET http://localhost:8080/test/redis/get/139594954136752128
+###
+GET http://127.0.0.1:8080/user/logout/139751519472979968

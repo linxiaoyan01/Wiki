@@ -120,6 +120,7 @@ export default defineComponent({
           store.commit("setUser", {});
         } else {
           message.error(data.message);
+          store.commit("setUser", {});
         }
       });
     };
